@@ -1,0 +1,36 @@
+
+Version: “”3.8
+services:
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /var/log/node_log
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: "postgres:latest"
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=database
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGPORT=5432
+
+  nginx:
+    depends_on:
+      - node
+      - postgres
+      - angular
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+
+
